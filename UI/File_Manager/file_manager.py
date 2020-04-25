@@ -66,16 +66,9 @@ class Ui_MainWindow(object):
         self.Folder_List = QtWidgets.QListWidget(self.layoutWidget1)
         self.Folder_List.setObjectName("Folder_List")
         self.Folder_List_Lay.addWidget(self.Folder_List)
-        self.Folder_Scroll = QtWidgets.QScrollBar(self.layoutWidget1)
-        self.Folder_Scroll.setFocusPolicy(QtCore.Qt.NoFocus)
-        self.Folder_Scroll.setOrientation(QtCore.Qt.Vertical)
-        self.Folder_Scroll.setObjectName("Folder_Scroll")
-        self.Folder_List_Lay.addWidget(self.Folder_Scroll)
         MainWindow.setCentralWidget(self.File_Manager_Widget)
 
         self.retranslateUi(MainWindow)
-        self.Folder_Scroll.sliderMoved['int'].connect(self.Folder_List.scrollToTop)
-        self.Folder_Scroll.sliderMoved['int'].connect(self.Folder_List.scrollToBottom)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):

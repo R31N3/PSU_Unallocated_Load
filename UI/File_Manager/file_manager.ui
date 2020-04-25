@@ -108,55 +108,10 @@
      <item>
       <widget class="QListWidget" name="Folder_List"/>
      </item>
-     <item>
-      <widget class="QScrollBar" name="Folder_Scroll">
-       <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
     </layout>
    </widget>
   </widget>
  </widget>
- <resources>
-  <include location="file_manager.qrc"/>
- </resources>
- <connections>
-  <connection>
-   <sender>Folder_Scroll</sender>
-   <signal>sliderMoved(int)</signal>
-   <receiver>Folder_List</receiver>
-   <slot>scrollToTop()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>679</x>
-     <y>320</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>637</x>
-     <y>324</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>Folder_Scroll</sender>
-   <signal>sliderMoved(int)</signal>
-   <receiver>Folder_List</receiver>
-   <slot>scrollToBottom()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>674</x>
-     <y>261</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>645</x>
-     <y>267</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <resources/>
+ <connections/>
 </ui>
