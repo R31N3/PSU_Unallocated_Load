@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1772</width>
+    <height>1254</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Распредление нагрузки</string>
+  </property>
+  <property name="toolTipDuration">
+   <number>-4</number>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QTabWidget" name="MainTab">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>1751</width>
+      <height>1231</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>0</width>
+      <height>0</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>1751</width>
+      <height>1231</height>
+     </size>
+    </property>
+    <property name="font">
+     <font>
+      <family>Open Sans Light</family>
+      <pointsize>22</pointsize>
+     </font>
+    </property>
+    <property name="mouseTracking">
+     <bool>true</bool>
+    </property>
+    <property name="tabPosition">
+     <enum>QTabWidget::North</enum>
+    </property>
+    <property name="tabShape">
+     <enum>QTabWidget::Rounded</enum>
+    </property>
+    <property name="currentIndex">
+     <number>1</number>
+    </property>
+    <widget class="QWidget" name="FilesSelection">
+     <attribute name="title">
+      <string>Выбор файлов</string>
+     </attribute>
+     <widget class="QListWidget" name="SelectedLoad">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>60</y>
+        <width>841</width>
+        <height>981</height>
+       </rect>
+      </property>
+      <property name="contextMenuPolicy">
+       <enum>Qt::DefaultContextMenu</enum>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="LoadSelection">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>1070</y>
+        <width>791</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>18</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Выберите файлы с нераспределенной нагрузкой</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="TeachersSelection">
+      <property name="geometry">
+       <rect>
+        <x>920</x>
+        <y>1070</y>
+        <width>781</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>18</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Выберите файлы преподавателей для распределения</string>
+      </property>
+     </widget>
+     <widget class="QListWidget" name="SelectedTeachers">
+      <property name="geometry">
+       <rect>
+        <x>890</x>
+        <y>60</y>
+        <width>841</width>
+        <height>981</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="LoadLabel">
+      <property name="geometry">
+       <rect>
+        <x>150</x>
+        <y>10</y>
+        <width>531</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Файлы с нераспределенной нагрузкой</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="TeacherLable">
+      <property name="geometry">
+       <rect>
+        <x>980</x>
+        <y>10</y>
+        <width>651</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Файлы с преподавателями для распределения</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="Work">
+     <attribute name="title">
+      <string>Распределение нагрузки по преподавателям</string>
+     </attribute>
+     <widget class="QPushButton" name="RefreshLoad">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>10</y>
+        <width>801</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Обновить нераспределенную нагрузку</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="RefreshTeachers">
+      <property name="geometry">
+       <rect>
+        <x>900</x>
+        <y>10</y>
+        <width>801</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Обновить список преподавателей</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="EndWork">
+      <property name="geometry">
+       <rect>
+        <x>620</x>
+        <y>1100</y>
+        <width>501</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Завершить обработку</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="AddLoadRow">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>1040</y>
+        <width>421</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Добавить строку</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="AddLoadColumn">
+      <property name="geometry">
+       <rect>
+        <x>440</x>
+        <y>1040</y>
+        <width>421</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Добавить столбец</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="AddTeachersColumn">
+      <property name="geometry">
+       <rect>
+        <x>1310</x>
+        <y>1040</y>
+        <width>421</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Добавить столбец</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="AddTeachersRow">
+      <property name="geometry">
+       <rect>
+        <x>880</x>
+        <y>1040</y>
+        <width>421</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Добавить строку</string>
+      </property>
+     </widget>
+     <widget class="QTabWidget" name="LoadTabs">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>70</y>
+        <width>851</width>
+        <height>951</height>
+       </rect>
+      </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="tab_5">
+       <attribute name="title">
+        <string>Tab 1</string>
+       </attribute>
+       <widget class="QTableWidget" name="tableWidget">
+        <property name="geometry">
+         <rect>
+          <x>-10</x>
+          <y>-10</y>
+          <width>861</width>
+          <height>901</height>
+         </rect>
+        </property>
+       </widget>
+      </widget>
+     </widget>
+     <widget class="QTabWidget" name="TeachersTabs">
+      <property name="geometry">
+       <rect>
+        <x>880</x>
+        <y>70</y>
+        <width>851</width>
+        <height>951</height>
+       </rect>
+      </property>
+      <widget class="QWidget" name="tab_9">
+       <attribute name="title">
+        <string>Tab 1</string>
+       </attribute>
+       <widget class="QTableWidget" name="tableWidget_2">
+        <property name="geometry">
+         <rect>
+          <x>-10</x>
+          <y>-10</y>
+          <width>861</width>
+          <height>901</height>
+         </rect>
+        </property>
+       </widget>
+      </widget>
+     </widget>
+     <widget class="QPushButton" name="AddTeachersTab">
+      <property name="geometry">
+       <rect>
+        <x>1280</x>
+        <y>1100</y>
+        <width>451</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Добавить лист преподавателя</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="AddLoadTab">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>1100</y>
+        <width>451</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Добавить лист с нагрузкой</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_3">
+     <attribute name="title">
+      <string>Завершение обработки</string>
+     </attribute>
+    </widget>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
