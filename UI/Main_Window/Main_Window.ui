@@ -93,6 +93,7 @@
       </property>
       <property name="font">
        <font>
+        <family>Open Sans Light</family>
         <pointsize>18</pointsize>
        </font>
       </property>
@@ -111,6 +112,7 @@
       </property>
       <property name="font">
        <font>
+        <family>Open Sans Light</family>
         <pointsize>18</pointsize>
        </font>
       </property>
@@ -260,23 +262,8 @@
        </rect>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>-1</number>
       </property>
-      <widget class="QWidget" name="tab_5">
-       <attribute name="title">
-        <string>Tab 1</string>
-       </attribute>
-       <widget class="QTableWidget" name="tableWidget">
-        <property name="geometry">
-         <rect>
-          <x>-10</x>
-          <y>-10</y>
-          <width>861</width>
-          <height>901</height>
-         </rect>
-        </property>
-       </widget>
-      </widget>
      </widget>
      <widget class="QTabWidget" name="TeachersTabs">
       <property name="geometry">
@@ -287,21 +274,6 @@
         <height>951</height>
        </rect>
       </property>
-      <widget class="QWidget" name="tab_9">
-       <attribute name="title">
-        <string>Tab 1</string>
-       </attribute>
-       <widget class="QTableWidget" name="tableWidget_2">
-        <property name="geometry">
-         <rect>
-          <x>-10</x>
-          <y>-10</y>
-          <width>861</width>
-          <height>901</height>
-         </rect>
-        </property>
-       </widget>
-      </widget>
      </widget>
      <widget class="QPushButton" name="AddTeachersTab">
       <property name="geometry">
