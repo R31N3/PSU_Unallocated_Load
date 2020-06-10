@@ -102,13 +102,10 @@ class Ui_MainWindow(object):
         self.AddLoadTab.setGeometry(QtCore.QRect(10, 1100, 451, 51))
         self.AddLoadTab.setObjectName("AddLoadTab")
         self.MainTab.addTab(self.Work, "")
-        self.tab_3 = QtWidgets.QWidget()
-        self.tab_3.setObjectName("tab_3")
-        self.MainTab.addTab(self.tab_3, "")
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
-        self.MainTab.setCurrentIndex(1)
+        self.MainTab.setCurrentIndex(0)
         self.LoadTabs.setCurrentIndex(-1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -130,4 +127,3 @@ class Ui_MainWindow(object):
         self.AddTeachersTab.setText(_translate("MainWindow", "Добавить лист преподавателя"))
         self.AddLoadTab.setText(_translate("MainWindow", "Добавить лист с нагрузкой"))
         self.MainTab.setTabText(self.MainTab.indexOf(self.Work), _translate("MainWindow", "Распределение нагрузки по преподавателям"))
-        self.MainTab.setTabText(self.MainTab.indexOf(self.tab_3), _translate("MainWindow", "Завершение обработки"))

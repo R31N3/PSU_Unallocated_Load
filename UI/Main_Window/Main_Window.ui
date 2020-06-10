@@ -63,7 +63,7 @@
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="FilesSelection">
      <attribute name="title">
@@ -301,11 +301,6 @@
        <string>Добавить лист с нагрузкой</string>
       </property>
      </widget>
-    </widget>
-    <widget class="QWidget" name="tab_3">
-     <attribute name="title">
-      <string>Завершение обработки</string>
-     </attribute>
     </widget>
    </widget>
   </widget>

@@ -1,8 +1,12 @@
-import sys, os, shutil, datetime
-import openpyxl, sympy
-from typing import Dict, List, Tuple, Optional
+import sys
+import os
+import shutil
+import openpyxl
+import sympy
+from typing import Dict, List, Tuple
 from pathlib import Path
 from PyQt5 import QtWidgets, QtGui, QtCore
+from openpyxl.worksheet.worksheet import Worksheet
 
 import UI.Main_Window.main_window as main_window
 
@@ -33,12 +37,19 @@ class MainWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
         # Инициализация
         self.setupUi(self)
-        self.source_dir = QtWidgets.QFileDialog.getExistingDirectory(self, "Выберите директорию с файлами для работы", directory=self.root_dir) or self.root_dir
-        self.work_dir = QtWidgets.QFileDialog.getExistingDirectory(self, "Выберите рабочую директорию", directory=self.root_dir) or self.root_dir
-        self.result_dir = os.path.join(self.work_dir, "Результат")
-        if os.path.exists(self.result_dir):
-            os.rmdir(self.result_dir)
-        os.mkdir(self.result_dir)
+        self.source_dir = (
+            QtWidgets.QFileDialog.getExistingDirectory(
+                self, "Выберите директорию с файлами для работы", directory=self.root_dir
+            ) or self.root_dir
+        )
+        self.work_dir = (
+                QtWidgets.QFileDialog.getExistingDirectory(
+                    self, "Выберите рабочую директорию", directory=self.root_dir
+                ) or self.root_dir
+        )
+        self.result_dir = os.path.join(self.work_dir, "Результаты")
+        if not os.path.exists(self.result_dir):
+            os.mkdir(self.result_dir)
 
         # Действия
         self.LoadSelection.clicked.connect(lambda: self.selection_button(
@@ -50,11 +61,20 @@ class MainWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
             qlist=self.SelectedLoad,
         ))
         self.RefreshLoad.clicked.connect(lambda: self.refresh(
-            data_list=self.selected_load, opened_files=self.opened_load, tables=self.load_tables, tab_widget=self.LoadTabs
+            data_list=self.selected_load,
+            opened_files=self.opened_load,
+            tables=self.load_tables,
+            tab_widget=self.LoadTabs
         ))
-        self.AddLoadRow.clicked.connect(lambda: self.add_row_button(tab_widget=self.LoadTabs, tables=self.load_tables))
-        self.AddLoadColumn.clicked.connect(lambda: self.add_column_button(tab_widget=self.LoadTabs, tables=self.load_tables))
-        self.AddLoadTab.clicked.connect(lambda: self.add_tab_button(tab_widget=self.LoadTabs, tables=self.load_tables))
+        self.AddLoadRow.clicked.connect(lambda: self.add_row_button(
+            tab_widget=self.LoadTabs, tables=self.load_tables
+        ))
+        self.AddLoadColumn.clicked.connect(lambda: self.add_column_button(
+            tab_widget=self.LoadTabs, tables=self.load_tables
+        ))
+        self.AddLoadTab.clicked.connect(lambda: self.add_tab_button(
+            tab_widget=self.LoadTabs, tables=self.load_tables, opened_files=self.opened_load
+        ))
 
         self.TeachersSelection.clicked.connect(lambda: self.selection_button(
             qlist=self.SelectedTeachers,
@@ -65,7 +85,10 @@ class MainWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
             qlist=self.SelectedTeachers,
         ))
         self.RefreshTeachers.clicked.connect(lambda: self.refresh(
-            data_list=self.selected_teachers, opened_files=self.opened_teachers, tables=self.teachers_tables, tab_widget=self.TeachersTabs
+            data_list=self.selected_teachers,
+            opened_files=self.opened_teachers,
+            tables=self.teachers_tables,
+            tab_widget=self.TeachersTabs
         ))
         self.AddTeachersRow.clicked.connect(
             lambda: self.add_row_button(tab_widget=self.TeachersTabs, tables=self.teachers_tables)
@@ -74,10 +97,15 @@ class MainWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
             lambda: self.add_column_button(tab_widget=self.TeachersTabs, tables=self.teachers_tables)
         )
         self.AddTeachersTab.clicked.connect(
-            lambda: self.add_tab_button(tab_widget=self.TeachersTabs, tables=self.teachers_tables)
+            lambda: self.add_tab_button(
+                tab_widget=self.TeachersTabs, tables=self.teachers_tables, opened_files=self.opened_teachers
+            )
         )
 
-    def fill_list(self, qlist: QtWidgets.QListWidget, selected_files):
+        self.EndWork.clicked.connect(self.end_work_button)
+
+    @staticmethod
+    def fill_list(qlist: QtWidgets.QListWidget, selected_files):
         qlist.clear()
         for selected in selected_files:
             qlist.addItem(selected[0])
@@ -103,10 +131,17 @@ class MainWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         menu.triggered.connect(lambda: self.deletion_from_list(data_list=data_list, qlist=qlist))
         menu.exec_(QtGui.QCursor.pos())
 
-    def refresh(self, data_list: list, opened_files: Dict[str, openpyxl.Workbook], tab_widget: QtWidgets.QTabWidget, tables: Dict[str, QtWidgets.QTableWidget]):
+    def refresh(
+            self, data_list: list, opened_files: Dict[str, openpyxl.Workbook],
+            tab_widget: QtWidgets.QTabWidget, tables: Dict[str, QtWidgets.QTableWidget]
+    ):
         for load_file in data_list:
             file_name = load_file[0]
-            target_temp_file = os.path.join(self.work_dir, file_name)
+            if tab_widget.objectName() == self.LoadTabs.objectName():
+                target_temp_file = os.path.join(self.work_dir, file_name)
+            else:
+                target_temp_file = os.path.join(self.work_dir, "Результаты", file_name)
+
             if not os.path.exists(target_temp_file):
                 shutil.copyfile(load_file[1], target_temp_file)
                 opened_file = openpyxl.load_workbook(filename=target_temp_file)
@@ -132,18 +167,27 @@ class MainWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
                 table = tables[tab_name]
 
                 ws = opened_file[sheet_name]
+
+                for items in ws.merged_cell_ranges:
+                    ws.unmerge_cells(str(items))
+
                 headers = [item.value for item in ws[8] if item.value is not None]
-                row = 9
+                row = 1
                 rows = []
                 table.setColumnCount(len(headers))
                 table.setHorizontalHeaderLabels(headers)
-                while ws[row][0].value is not None:
+                counter = 0
+                while ws[row][0].value is not None or counter < 5:
                     row_values = []
                     table.insertRow(table.rowCount())
                     for col in range(len(headers)):
                         row_values.append(QtWidgets.QTableWidgetItem(str(ws[row][col].value or "")))
                     rows.append(row_values)
                     row += 1
+                    if ws[row][0].value is None:
+                        counter += 1
+                    else:
+                        counter = 0
 
                 row = 0
                 for row_values in rows:
@@ -152,11 +196,12 @@ class MainWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
                     row += 1
 
                 table.resizeColumnsToContents()
-                table.itemChanged.connect(lambda: self.change_table_cell_value(active_table=table, tab_widget=tab))
-                table.itemChanged.connect(table.resizeColumnsToContents)
-                table.itemChanged.connect(table.resizeRowsToContents)
+                table.itemChanged.connect(lambda: self.change_table_cell_value(
+                    active_table=table, current_workbook=opened_file, sheet_name=sheet_name, file_path=target_temp_file
+                ))
 
-    def show_warning(self, title: str, text: str):
+    @staticmethod
+    def show_warning(title: str, text: str):
         warning = QtWidgets.QMessageBox()
         warning.setWindowTitle(title)
         warning.setText(text)
@@ -164,32 +209,57 @@ class MainWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         warning.setStandardButtons(warning.Ok)
         warning.exec()
 
-    def add_tab_button(self, tab_widget: QtWidgets.QTabWidget, tables: Dict[str, QtWidgets.QTableWidget]):
-        text, result = QtWidgets.QInputDialog.getText(self, "Добавление листа", "Введите название листа")
-        while not text or tables.get(text):
+    def add_tab_button(
+            self, tab_widget: QtWidgets.QTabWidget, tables: Dict[str, QtWidgets.QTableWidget],
+            opened_files: Dict[str, openpyxl.Workbook]
+    ):
+        file_name, result = QtWidgets.QInputDialog.getText(self, "Добавление файла", "Введите название файла")
+        if tab_widget.objectName() == self.LoadTabs.objectName():
+            file_path = f"{os.path.join(self.work_dir, file_name)}.xlsx"
+        else:
+            file_path = f"{os.path.join(self.work_dir, 'Результаты', file_name)}.xlsx"
+        while not file_name or opened_files.get(file_path) is not None:
             if not result:
                 return
-            self.show_warning(title="Ошибка добавления листа", text="Название листа пустое или существует!")
-            text, result = QtWidgets.QInputDialog.getText(self, "Добавление листа", "Введите название листа")
+            self.show_warning(title="Ошибка добавления файла", text="Название листа пустое или уже существует!")
+            file_name, result = QtWidgets.QInputDialog.getText(self, "Добавление файла", "Введите название файла")
 
+            if tab_widget.objectName() == self.LoadTabs.objectName():
+                file_path = f"{os.path.join(self.work_dir, file_name)}.xlsx"
+            else:
+                file_path = f"{os.path.join(self.work_dir, 'Результаты', file_name)}.xlsx"
+
+        sheet_name, result = QtWidgets.QInputDialog.getText(self, "Добавление листа", "Введите название листа")
+        while not sheet_name:
+            if not result:
+                return
+            self.show_warning(title="Ошибка добавления листа", text="Название листа не может быть пустым")
+            sheet_name, result = QtWidgets.QInputDialog.getText(self, "Добавление листа", "Введите название листа")
+
+        workbook = openpyxl.Workbook()
+        workbook.worksheets[0].title = sheet_name
+        workbook.save(file_path)
+        opened_files[file_path] = openpyxl.load_workbook(file_path)
+
+        tab_name = f"{file_name} -> {sheet_name}"
         tab_to_create = QtWidgets.QWidget()
-        tab_to_create.setObjectName(text)
-        tables[text] = QtWidgets.QTableWidget(tab_to_create)
-        tables[text].setGeometry(QtCore.QRect(-10, -10, 861, 901))
-        tables[text].setObjectName(text)
-        tables[text].setColumnCount(0)
-        tables[text].setRowCount(0)
-        tab_widget.addTab(tab_to_create, text)
+        tab_to_create.setObjectName(tab_name)
+        tables[tab_name] = QtWidgets.QTableWidget(tab_to_create)
+        tables[tab_name].setGeometry(QtCore.QRect(-10, -10, 861, 901))
+        tables[tab_name].setObjectName(tab_name)
+        tables[tab_name].setColumnCount(0)
+        tables[tab_name].setRowCount(0)
+        tab_widget.addTab(tab_to_create, tab_name)
         tab_widget.setCurrentWidget(tab_to_create)
-        table = tables[text]
-        table.itemChanged.connect(lambda: self.change_table_cell_value(active_table=table, tab_widget=tab_to_create))
-        table.itemChanged.connect(table.resizeColumnsToContents)
-        table.itemChanged.connect(table.resizeRowsToContents)
+        table = tables[tab_name]
+        table.itemChanged.connect(lambda: self.change_table_cell_value(
+            active_table=table, current_workbook=opened_files[file_path], sheet_name=sheet_name, file_path=file_path
+        ))
 
     def add_row_button(self, tab_widget: QtWidgets.QTabWidget, tables: Dict[str, QtWidgets.QTableWidget]):
         active_tab = tab_widget.currentWidget()
         if not active_tab:
-            self.show_warning(title="Ошибка добавления ячеек", text="Сначала добавьте лист!")
+            self.show_warning(title="Ошибка добавления ячеек", text="Сначала добавьте файл!")
             return
 
         table_name = active_tab.objectName()
@@ -199,34 +269,52 @@ class MainWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
     def add_column_button(self, tab_widget: QtWidgets.QTabWidget, tables: Dict[str, QtWidgets.QTableWidget]):
         active_tab = tab_widget.currentWidget()
         if not active_tab:
-            self.show_warning(title="Ошибка добавления ячеек", text="Сначала добавьте лист!")
+            self.show_warning(title="Ошибка добавления ячеек", text="Сначала добавьте файл!")
             return
 
         table_name = active_tab.objectName()
         current_table = tables[table_name]
         current_table.insertColumn(current_table.columnCount())
 
-    def change_table_cell_value(self, active_table: QtWidgets.QTableWidget, tab_widget: QtWidgets.QWidget, ):
-        opened_files: Dict[str, openpyxl.Workbook] = (
-            self.opened_load if tab_widget.parent().objectName() == self.LoadTabs.objectName() else self.opened_teachers
-        )
+    @staticmethod
+    def change_table_cell_value(
+            active_table: QtWidgets.QTableWidget, current_workbook: openpyxl.Workbook,
+            sheet_name: str, file_path: str
+    ):
         current_item = active_table.currentItem()
-        if " -> " in active_table.objectName():
-            file_name, sheet_name = active_table.objectName().split(" -> ")
-            current_temp_file_path = os.path.join(self.work_dir, file_name)
-            current_workbook = opened_files[current_temp_file_path]
 
         try:
             if current_item.text() != sympy.sympify(current_item.text()):
-                current_item.setText(str(sympy.sympify(current_item.text())))
+                if current_item.text() != "test":
+                    text = str(sympy.sympify(current_item.text()))
+                else:
+                    text = current_item.text()
+                current_item.setText(text)
+                current_worksheet: Worksheet = current_workbook[sheet_name]
+                current_worksheet.cell(row=current_item.row() + 1, column=current_item.column() + 1).value = text
+                current_workbook.save(file_path)
         except:
             pass
+
+    def end_work_button(self):
+        notification = QtWidgets.QMessageBox
+        button_clicked = notification.question(
+            self, "Завершение обработки",
+            "Вы уверены, что хотите завершить обработку?\nРезультаты работы будут храниться в подкаталоге "
+            "'Результаты' выбранной рабочей директории",
+            notification.Yes | notification.No
+        )
+
+        if button_clicked == notification.Yes:
+            for file_path, workbook in {**self.opened_teachers, **self.opened_load}.items():
+                workbook.save(file_path)
+            QtCore.QCoreApplication.instance().quit()
 
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
-    main_window = MainWindow()
-    main_window.show()
+    application_window = MainWindow()
+    application_window.show()
     app.exec_()
 
 
