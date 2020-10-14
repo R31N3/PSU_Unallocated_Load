@@ -23,8 +23,8 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>10</y>
+      <x>5</x>
+      <y>-5</y>
       <width>1271</width>
       <height>720</height>
      </rect>
@@ -63,7 +63,7 @@
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="FilesSelection">
      <attribute name="title">
@@ -85,9 +85,9 @@
      <widget class="QPushButton" name="LoadSelection">
       <property name="geometry">
        <rect>
-        <x>90</x>
+        <x>80</x>
         <y>590</y>
-        <width>451</width>
+        <width>471</width>
         <height>61</height>
        </rect>
       </property>
@@ -104,9 +104,9 @@
      <widget class="QPushButton" name="TeachersSelection">
       <property name="geometry">
        <rect>
-        <x>720</x>
+        <x>710</x>
         <y>590</y>
-        <width>451</width>
+        <width>471</width>
         <height>61</height>
        </rect>
       </property>
@@ -133,9 +133,9 @@
      <widget class="QLabel" name="LoadLabel">
       <property name="geometry">
        <rect>
-        <x>130</x>
+        <x>120</x>
         <y>20</y>
-        <width>341</width>
+        <width>401</width>
         <height>21</height>
        </rect>
       </property>
@@ -152,9 +152,9 @@
      <widget class="QLabel" name="TeacherLable">
       <property name="geometry">
        <rect>
-        <x>760</x>
+        <x>710</x>
         <y>20</y>
-        <width>421</width>
+        <width>481</width>
         <height>21</height>
        </rect>
       </property>
@@ -184,6 +184,7 @@
       </property>
       <property name="font">
        <font>
+        <family>MS Shell Dlg 2</family>
         <pointsize>14</pointsize>
        </font>
       </property>
@@ -215,6 +216,7 @@
       </property>
       <property name="font">
        <font>
+        <family>MS Shell Dlg 2</family>
         <pointsize>14</pointsize>
        </font>
       </property>
@@ -233,6 +235,7 @@
       </property>
       <property name="font">
        <font>
+        <family>MS Shell Dlg 2</family>
         <pointsize>14</pointsize>
        </font>
       </property>
@@ -251,6 +254,7 @@
       </property>
       <property name="font">
        <font>
+        <family>MS Shell Dlg 2</family>
         <pointsize>14</pointsize>
        </font>
       </property>
@@ -269,6 +273,7 @@
       </property>
       <property name="font">
        <font>
+        <family>MS Shell Dlg 2</family>
         <pointsize>14</pointsize>
        </font>
       </property>
@@ -287,6 +292,7 @@
       </property>
       <property name="font">
        <font>
+        <family>MS Shell Dlg 2</family>
         <pointsize>14</pointsize>
        </font>
       </property>
@@ -320,14 +326,15 @@
      <widget class="QPushButton" name="AddTeachersTab">
       <property name="geometry">
        <rect>
-        <x>960</x>
+        <x>930</x>
         <y>630</y>
-        <width>291</width>
+        <width>321</width>
         <height>41</height>
        </rect>
       </property>
       <property name="font">
        <font>
+        <family>MS Shell Dlg 2</family>
         <pointsize>14</pointsize>
        </font>
       </property>
@@ -346,6 +353,7 @@
       </property>
       <property name="font">
        <font>
+        <family>MS Shell Dlg 2</family>
         <pointsize>14</pointsize>
        </font>
       </property>
