@@ -1,4 +1,6 @@
-from typing import Optional
+from typing import Optional, List, Tuple, Dict
+
+from openpyxl import Workbook
 
 from PyQt5.QtCore import (
     QRect,
@@ -13,11 +15,19 @@ from PyQt5.QtWidgets import (
     QTabWidget,
     QListWidget,
     QPushButton,
-    QLabel
+    QLabel,
+    QTableWidget
 )
 
+from UI.enums import ListWidgetType, TabWidgetType
+
 __all__ = [
-    "QTabWidgetExtended", "QTabWidgetTabExtended", "QListWidgetExtended", "QPushButtonExtended", "QLabelExtended"
+    "QTabWidgetExtended",
+    "QTabWidgetTabExtended",
+    "QTableWidgetExtended",
+    "QListWidgetExtended",
+    "QPushButtonExtended",
+    "QLabelExtended"
 ]
 
 
@@ -29,6 +39,7 @@ class QTabWidgetExtended(QTabWidget):
             size_policy: Optional[QSizePolicy] = None,
             font: Optional[QFont] = None,
             font_size: Optional[int] = None,
+            tab_widget_type: Optional[TabWidgetType] = None,
             parent=None,
     ):
         super(QTabWidgetExtended, self).__init__(parent=parent)
@@ -45,6 +56,10 @@ class QTabWidgetExtended(QTabWidget):
             font_size=font_size,
             object_name=object_name
         )
+        # Setup Extension Values
+        if tab_widget_type == TabWidgetType.xlsx_tab_widget:
+            self.opened_files: Dict[str, Workbook] = {}
+            self.opened_files_tables: Dict[str, QTableWidgetExtended] = {}
 
     def _setup_variable_values(
             self,
@@ -66,15 +81,42 @@ class QTabWidgetExtended(QTabWidget):
 
 
 class QTabWidgetTabExtended(QWidget):
+    def __init__(self, object_name: str = None):
+        super(QTabWidgetTabExtended, self).__init__()
+        # Setup Variable Values
+        if object_name is not None:
+            self._setup_variable_values(object_name=object_name)
+
+    def _setup_variable_values(self, object_name: str):
+        self.setObjectName(object_name)
+
+
+class QTableWidgetExtended(QTableWidget):
     def __init__(
             self,
+            geometry: QRect,
+            object_name: str,
+            column_count: int = 0,
+            row_count: int = 0,
+            parent=None
     ):
-        super(QTabWidgetTabExtended, self).__init__()
+        super(QTableWidgetExtended, self).__init__(parent=parent)
+        # Setup Variable Values
+        self._setup_variable_values(
+            geometry=geometry, object_name=object_name, column_count=column_count, row_count=row_count
+        )
 
-        # # Setup Extension Variables
-        # if tab_type == TabWidgetType.files_selection_tab:
-        #     self.selected_files: List[Tuple[str, str]] = []
-        #     self.opened_files: Dict[str, Workbook] = {}
+    def _setup_variable_values(
+            self,
+            geometry: QRect,
+            object_name: str,
+            column_count: int,
+            row_count: int
+    ):
+        self.setGeometry(geometry)
+        self.setObjectName(object_name)
+        self.setColumnCount(column_count)
+        self.setRowCount(row_count)
 
 
 class QListWidgetExtended(QListWidget):
@@ -82,6 +124,7 @@ class QListWidgetExtended(QListWidget):
             self,
             geometry: QRect,
             object_name: str,
+            list_widget_type: Optional[ListWidgetType] = None,
             parent=None
     ):
         super(QListWidgetExtended, self).__init__(parent=parent)
@@ -89,6 +132,9 @@ class QListWidgetExtended(QListWidget):
         self.setContextMenuPolicy(Qt.DefaultContextMenu)
         # Setup Variable Values
         self._setup_variable_values(geometry=geometry, object_name=object_name)
+        # Setup Extension Values
+        if list_widget_type == ListWidgetType.files_list:
+            self.selected_files: List[Tuple[str, str]] = []
 
     def _setup_variable_values(
             self,

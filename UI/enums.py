@@ -1,7 +1,12 @@
 from enum import Enum
 
+__all__ = ["TabWidgetType", "ListWidgetType"]
+
 
 class TabWidgetType(Enum):
-    files_selection_tab = "files_selection_tab"
+    xlsx_tab_widget = "xlsx_tab_widget"
 
+
+class ListWidgetType(Enum):
+    files_list = "files_list"
 

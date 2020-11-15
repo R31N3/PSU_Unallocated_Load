@@ -277,24 +277,33 @@ class MainWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         current_table.insertColumn(current_table.columnCount())
 
     @staticmethod
+    def process_cell_value(cell_value: str):
+        value_to_check = cell_value
+        expressions = ["/", "+", "*", "^", "-", "**"]
+        for expr in expressions:
+            value_to_check = value_to_check.replace(expr, "")
+
+        for symbol_to_check in value_to_check:
+            if symbol_to_check.isdigit() is False and symbol_to_check not in {" "}:
+                return cell_value
+
+        try:
+            return str(sympy.sympify(cell_value))
+        except sympy.SympifyError:
+            return cell_value
+
     def change_table_cell_value(
-            active_table: QtWidgets.QTableWidget, current_workbook: openpyxl.Workbook,
+            self, active_table: QtWidgets.QTableWidget, current_workbook: openpyxl.Workbook,
             sheet_name: str, file_path: str
     ):
         current_item = active_table.currentItem()
 
-        try:
-            if current_item.text() != sympy.sympify(current_item.text()):
-                if current_item.text() != "test":
-                    text = str(sympy.sympify(current_item.text()))
-                else:
-                    text = current_item.text()
-                current_item.setText(text)
-                current_worksheet: Worksheet = current_workbook[sheet_name]
-                current_worksheet.cell(row=current_item.row() + 1, column=current_item.column() + 1).value = text
-                current_workbook.save(file_path)
-        except:
-            pass
+        text = self.process_cell_value(current_item.text())
+
+        current_item.setText(text)
+        current_worksheet: Worksheet = current_workbook[sheet_name]
+        current_worksheet.cell(row=current_item.row() + 1, column=current_item.column() + 1).value = text
+        current_workbook.save(file_path)
 
     def end_work_button(self):
         notification = QtWidgets.QMessageBox
