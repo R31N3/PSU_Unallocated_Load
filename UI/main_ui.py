@@ -17,6 +17,9 @@ from PyQt5.QtWidgets import (
 )
 
 from UI.extended_widgets import *
+from UI.enums import ListWidgetType, TabWidgetType
+
+__all__ = ["MainWindowRefactored"]
 
 
 class MainWindowRefactored(QMainWindow):
@@ -68,7 +71,9 @@ class MainWindowRefactored(QMainWindow):
 
         # Load Files Section
         self.load_files_list = QListWidgetExtended(
-            geometry=QRect(10, 60, 610, 520), object_name="LoadFilesList",
+            geometry=QRect(10, 60, 610, 520),
+            object_name="LoadFilesList",
+            list_widget_type=ListWidgetType.files_list,
             parent=self.files_selection_tab
         )
         self.load_files_selection_button = QPushButtonExtended(
@@ -79,7 +84,9 @@ class MainWindowRefactored(QMainWindow):
 
         # Teachers Files Section
         self.teachers_files_list = QListWidgetExtended(
-            geometry=QRect(640, 60, 610, 520), object_name="TeachersFilesList",
+            geometry=QRect(640, 60, 610, 520),
+            object_name="TeachersFilesList",
+            list_widget_type=ListWidgetType.files_list,
             parent=self.files_selection_tab
         )
         self.teachers_files_selection_button = QPushButtonExtended(
@@ -104,7 +111,10 @@ class MainWindowRefactored(QMainWindow):
 
         # Load Tab Section
         self.load_tab = QTabWidgetExtended(
-            geometry=QRect(10, 50, 610, 520), object_name="LoadTab", parent=self.work_with_files_tab
+            geometry=QRect(10, 50, 610, 520),
+            object_name="LoadTab",
+            parent=self.work_with_files_tab,
+            tab_widget_type=TabWidgetType.xlsx_tab_widget
         )
         self.refresh_load_button = QPushButtonExtended(
             geometry=QRect(50, 10, 530, 30), font=self.default_font, font_size=14, object_name="RefreshLoadButton",
@@ -125,7 +135,10 @@ class MainWindowRefactored(QMainWindow):
 
         # Teachers Tab Section
         self.teachers_tab = QTabWidgetExtended(
-            geometry=QRect(640, 50, 610, 520), object_name="TeachersTab", parent=self.work_with_files_tab
+            geometry=QRect(640, 50, 610, 520),
+            object_name="TeachersTab",
+            parent=self.work_with_files_tab,
+            tab_widget_type=TabWidgetType.xlsx_tab_widget
         )
         self.refresh_teachers_button = QPushButtonExtended(
             geometry=QRect(680, 10, 530, 30), font=self.default_font, font_size=14, object_name="RefreshTeachersButton",

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'Main_Window.ui'
+# Form implementation generated from reading ui file 'MainWindowLinux.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.1
 #
@@ -18,7 +18,6 @@ class Ui_MainWindow(object):
         MainWindow.setToolTipDuration(-4)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        # Core Tab Widget
         self.MainTab = QtWidgets.QTabWidget(self.centralwidget)
         self.MainTab.setEnabled(True)
         self.MainTab.setGeometry(QtCore.QRect(5, -5, 1271, 720))
@@ -37,10 +36,8 @@ class Ui_MainWindow(object):
         self.MainTab.setTabPosition(QtWidgets.QTabWidget.North)
         self.MainTab.setTabShape(QtWidgets.QTabWidget.Rounded)
         self.MainTab.setObjectName("MainTab")
-        # File Selection Tab
         self.FilesSelection = QtWidgets.QWidget()
         self.FilesSelection.setObjectName("FilesSelection")
-        # Load Selection
         self.SelectedLoad = QtWidgets.QListWidget(self.FilesSelection)
         self.SelectedLoad.setGeometry(QtCore.QRect(10, 60, 611, 521))
         self.SelectedLoad.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
@@ -52,7 +49,6 @@ class Ui_MainWindow(object):
         font.setPointSize(12)
         self.LoadSelection.setFont(font)
         self.LoadSelection.setObjectName("LoadSelection")
-        # Teachers Selection
         self.TeachersSelection = QtWidgets.QPushButton(self.FilesSelection)
         self.TeachersSelection.setGeometry(QtCore.QRect(710, 590, 471, 61))
         font = QtGui.QFont()
@@ -63,7 +59,6 @@ class Ui_MainWindow(object):
         self.SelectedTeachers = QtWidgets.QListWidget(self.FilesSelection)
         self.SelectedTeachers.setGeometry(QtCore.QRect(640, 60, 611, 521))
         self.SelectedTeachers.setObjectName("SelectedTeachers")
-        # Labels
         self.LoadLabel = QtWidgets.QLabel(self.FilesSelection)
         self.LoadLabel.setGeometry(QtCore.QRect(120, 20, 401, 21))
         font = QtGui.QFont()
@@ -78,9 +73,7 @@ class Ui_MainWindow(object):
         font.setPointSize(14)
         self.TeacherLable.setFont(font)
         self.TeacherLable.setObjectName("TeacherLable")
-        #
         self.MainTab.addTab(self.FilesSelection, "")
-        # Work Tab
         self.Work = QtWidgets.QWidget()
         self.Work.setObjectName("Work")
         self.RefreshLoad = QtWidgets.QPushButton(self.Work)
@@ -128,7 +121,6 @@ class Ui_MainWindow(object):
         font.setPointSize(14)
         self.AddTeachersRow.setFont(font)
         self.AddTeachersRow.setObjectName("AddTeachersRow")
-        # Work Tables
         self.LoadTabs = QtWidgets.QTabWidget(self.Work)
         self.LoadTabs.setGeometry(QtCore.QRect(10, 50, 611, 520))
         self.LoadTabs.setObjectName("LoadTabs")
