@@ -1,19 +1,21 @@
-import os, sys
+import os
+import sys
 import shutil
 from pathlib import Path
-from typing import Tuple, List
+from typing import List
 
 from openpyxl import load_workbook, Workbook
 from openpyxl.worksheet.worksheet import Worksheet
 
 from PyQt5.QtCore import QRect
-from PyQt5.QtWidgets import QApplication, QFileDialog, QMenu, QTableWidgetItem
+from PyQt5.QtWidgets import QApplication, QFileDialog, QMenu, QTableWidgetItem, QMessageBox
 from PyQt5.QtGui import QCursor
 
 from sympy import sympify, SympifyError
 
 from UI.main_ui import MainWindowRefactored
 from UI.extended_widgets import *
+from UI.enums import ButtonWidgetType
 
 
 class UnallocatedLoadApplication(MainWindowRefactored):
@@ -37,16 +39,18 @@ class UnallocatedLoadApplication(MainWindowRefactored):
 
     def _setup_files_selection_actions(self):
         # Setup Files Selection Section Actions
-        files_selection_buttons_with_lists = [
-            (self.load_files_selection_button, self.load_files_list),
-            (self.teachers_files_selection_button, self.teachers_files_list)
-        ]
-        for button_with_list in files_selection_buttons_with_lists:
-            button, files_list = button_with_list
-            button.clicked.connect(lambda: self._files_selection_button_action(button_with_list=button_with_list))
-            files_list.itemClicked['QListWidgetItem*'].connect(
-                lambda: self._deletion_from_files_list_menu(files_list=files_list)
-            )
+        self.load_files_selection_button.clicked.connect(
+            lambda: self._files_selection_button_action(files_list=self.load_files_list)
+        )
+        self.load_files_list.itemClicked['QListWidgetItem*'].connect(
+            lambda: self._deletion_from_files_list_menu(files_list=self.load_files_list)
+        )
+        self.teachers_files_selection_button.clicked.connect(
+            lambda: self._files_selection_button_action(files_list=self.teachers_files_list)
+        )
+        self.teachers_files_list.itemClicked['QListWidgetItem*'].connect(
+            lambda: self._deletion_from_files_list_menu(files_list=self.teachers_files_list)
+        )
 
     @staticmethod
     def _list_fill_action(acting_list: QListWidgetExtended):
@@ -55,9 +59,8 @@ class UnallocatedLoadApplication(MainWindowRefactored):
             acting_list.addItem(selected[0])
 
     def _files_selection_button_action(
-            self, button_with_list: Tuple[QPushButtonExtended, QListWidgetExtended]
+            self, files_list: QListWidgetExtended
     ):
-        button, files_list = button_with_list
         for selected_file in QFileDialog.getOpenFileNames(
                 self, "Выберите файлы", filter="Excel Files (*.xls *.xlsx)", directory=self.source_dir
         )[0]:
@@ -81,14 +84,38 @@ class UnallocatedLoadApplication(MainWindowRefactored):
 
     def _setup_work_with_files_actions(self):
         # Setup Refresh Buttons Actions
-        refreshable_tables_data_list: List[Tuple[QPushButtonExtended, List[str], str, QTabWidgetExtended]] = [
-            (self.refresh_load_button, self.load_files_list.selected_files, self.work_dir, self.load_tab),
-            (self.refresh_teachers_button, self.teachers_files_list.selected_files, self.result_dir, self.teachers_tab)
-        ]
+        self.refresh_load_button.clicked.connect(lambda: self._refresh_opened_files_from_list(
+            selected_files=self.load_files_list.selected_files,
+            files_path=self.work_dir,
+            files_tab_widget=self.load_tab
+        ))
+        self.refresh_teachers_button.clicked.connect(lambda: self._refresh_opened_files_from_list(
+            selected_files=self.teachers_files_list.selected_files,
+            files_path=self.result_dir,
+            files_tab_widget=self.teachers_tab
+        ))
 
-        for refreshable_data in refreshable_tables_data_list:
-            refresh_button = refreshable_data[0]
-            refresh_button.clicked.connect(lambda: self._refresh_opened_files_from_list(*refreshable_data[1:]))
+        # Setup Table Interaction Buttons
+        self.add_load_row_button.clicked.connect(
+            lambda: self._add_row_or_col_action(
+                files_tab_widget=self.load_tab, action_button=self.add_load_row_button
+            )
+        )
+        self.add_load_column_button.clicked.connect(
+            lambda: self._add_row_or_col_action(
+                files_tab_widget=self.load_tab, action_button=self.add_load_column_button
+            )
+        )
+        self.add_teachers_row_button.clicked.connect(
+            lambda: self._add_row_or_col_action(
+                files_tab_widget=self.teachers_tab, action_button=self.add_teachers_row_button
+            )
+        )
+        self.add_teachers_column_button.clicked.connect(
+            lambda: self._add_row_or_col_action(
+                files_tab_widget=self.teachers_tab, action_button=self.add_teachers_column_button
+            )
+        )
 
     def _refresh_opened_files_from_list(
             self,
@@ -113,8 +140,9 @@ class UnallocatedLoadApplication(MainWindowRefactored):
                 if files_tab_widget.opened_files_tables.get(tab_name) is None:
                     new_tab = QTabWidgetTabExtended(object_name=tab_name)
                     files_tab_widget.opened_files_tables[tab_name] = QTableWidgetExtended(
-                        geometry=QRect(-10, -10, 861, 901),
+                        geometry=QRect(-10, -10, 610, 520),
                         object_name=tab_name,
+                        parent=new_tab
                     )
                     files_tab_widget.addTab(new_tab, tab_name)
                 table_widget = files_tab_widget.opened_files_tables[tab_name]
@@ -169,13 +197,13 @@ class UnallocatedLoadApplication(MainWindowRefactored):
             self, table_widget: QTableWidgetExtended, current_workbook: Workbook, sheet_name: str, file_path: str
     ):
         current_item = table_widget.currentItem()
+        if current_item is not None:
+            text = self._process_cell_value(current_item.text())
 
-        text = self.process_cell_value(current_item.text())
-
-        current_item.setText(text)
-        current_worksheet: Worksheet = current_workbook[sheet_name]
-        current_worksheet.cell(row=current_item.row() + 1, column=current_item.column() + 1).value = text
-        current_workbook.save(file_path)
+            current_item.setText(text)
+            current_worksheet: Worksheet = current_workbook[sheet_name]
+            current_worksheet.cell(row=current_item.row() + 1, column=current_item.column() + 1).value = text
+            current_workbook.save(file_path)
 
     @staticmethod
     def _process_cell_value(cell_value: str) -> str:
@@ -192,6 +220,30 @@ class UnallocatedLoadApplication(MainWindowRefactored):
             return str(sympify(cell_value))
         except SympifyError:
             return cell_value
+
+    def _add_row_or_col_action(
+            self, files_tab_widget: QTabWidgetExtended, action_button: QPushButtonExtended
+    ):
+        active_tab = files_tab_widget.currentWidget()
+        if active_tab is None:
+            self._show_warning(title="Ошибка добавления ячеек", text="Сначала добавьте файл!")
+            return
+
+        table_name = active_tab.objectName()
+        current_table = files_tab_widget.opened_files_tables[table_name]
+        if action_button.button_widget_type == ButtonWidgetType.add_col_button:
+            current_table.insertColumn(current_table.columnCount())
+        elif action_button.button_widget_type == ButtonWidgetType.add_row_button:
+            current_table.insertRow(current_table.rowCount())
+
+    @staticmethod
+    def _show_warning(title: str, text: str):
+        warning = QMessageBox()
+        warning.setWindowTitle(title)
+        warning.setText(text)
+        warning.setIcon(warning.Warning)
+        warning.setStandardButtons(warning.Ok)
+        warning.exec()
 
 
 def main():

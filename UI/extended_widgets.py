@@ -19,7 +19,7 @@ from PyQt5.QtWidgets import (
     QTableWidget
 )
 
-from UI.enums import ListWidgetType, TabWidgetType
+from UI.enums import ListWidgetType, TabWidgetType, ButtonWidgetType
 
 __all__ = [
     "QTabWidgetExtended",
@@ -152,6 +152,7 @@ class QPushButtonExtended(QPushButton):
             font: QFont,
             font_size: int,
             object_name: str,
+            button_widget_type: Optional[ButtonWidgetType] = None,
             parent=None
     ):
         super(QPushButtonExtended, self).__init__(parent=parent)
@@ -163,6 +164,8 @@ class QPushButtonExtended(QPushButton):
             font_size=font_size,
             object_name=object_name
         )
+        # Setup Extension Values
+        self.button_widget_type = button_widget_type
 
     def _setup_variable_values(
             self,

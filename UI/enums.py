@@ -1,6 +1,6 @@
 from enum import Enum
 
-__all__ = ["TabWidgetType", "ListWidgetType"]
+__all__ = ["TabWidgetType", "ListWidgetType", "ButtonWidgetType"]
 
 
 class TabWidgetType(Enum):
@@ -10,3 +10,7 @@ class TabWidgetType(Enum):
 class ListWidgetType(Enum):
     files_list = "files_list"
 
+
+class ButtonWidgetType(Enum):
+    add_row_button = "add_row_button"
+    add_col_button = "add_col_button"

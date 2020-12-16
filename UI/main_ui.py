@@ -17,7 +17,7 @@ from PyQt5.QtWidgets import (
 )
 
 from UI.extended_widgets import *
-from UI.enums import ListWidgetType, TabWidgetType
+from UI.enums import ListWidgetType, TabWidgetType, ButtonWidgetType
 
 __all__ = ["MainWindowRefactored"]
 
@@ -122,11 +122,11 @@ class MainWindowRefactored(QMainWindow):
         )
         self.add_load_row_button = QPushButtonExtended(
             geometry=QRect(10, 580, 290, 40), font=self.default_font, font_size=14, object_name="AddLoadRowButton",
-            parent=self.work_with_files_tab
+            button_widget_type=ButtonWidgetType.add_row_button, parent=self.work_with_files_tab
         )
         self.add_load_column_button = QPushButtonExtended(
             geometry=QRect(330, 580, 290, 40), font=self.default_font, font_size=14, object_name="AddLoadColumnButton",
-            parent=self.work_with_files_tab
+            button_widget_type=ButtonWidgetType.add_col_button,parent=self.work_with_files_tab
         )
         self.add_load_sheet_button = QPushButtonExtended(
             geometry=QRect(10, 630, 320, 40), font=self.default_font, font_size=14, object_name="AddLoadSheetButton",
@@ -146,11 +146,11 @@ class MainWindowRefactored(QMainWindow):
         )
         self.add_teachers_row_button = QPushButtonExtended(
             geometry=QRect(640, 580, 290, 40), font=self.default_font, font_size=14, object_name="AddTeachersRowButton",
-            parent=self.work_with_files_tab
+            button_widget_type=ButtonWidgetType.add_row_button, parent=self.work_with_files_tab
         )
         self.add_teachers_column_button = QPushButtonExtended(
             geometry=QRect(960, 580, 290, 40), font=self.default_font, font_size=14,
-            object_name="AddTeachersColumnButton",
+            object_name="AddTeachersColumnButton", button_widget_type=ButtonWidgetType.add_col_button,
             parent=self.work_with_files_tab
         )
         self.add_teachers_sheet_button = QPushButtonExtended(
