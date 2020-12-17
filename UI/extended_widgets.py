@@ -7,7 +7,7 @@ from PyQt5.QtCore import (
 )
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import (
-    QFont
+    QFont, QDropEvent
 )
 from PyQt5.QtWidgets import (
     QSizePolicy,
@@ -16,7 +16,8 @@ from PyQt5.QtWidgets import (
     QListWidget,
     QPushButton,
     QLabel,
-    QTableWidget
+    QTableWidget,
+    QInputDialog
 )
 
 from UI.enums import ListWidgetType, TabWidgetType, ButtonWidgetType
@@ -98,6 +99,7 @@ class QTableWidgetExtended(QTableWidget):
             object_name: str,
             column_count: int = 0,
             row_count: int = 0,
+            enable_custom_drag_n_drop: bool = False,
             parent=None
     ):
         super(QTableWidgetExtended, self).__init__(parent=parent)
@@ -105,6 +107,8 @@ class QTableWidgetExtended(QTableWidget):
         self._setup_variable_values(
             geometry=geometry, object_name=object_name, column_count=column_count, row_count=row_count
         )
+        # Setup Default Actions
+        self._setup_default_actions(enable_custom_drag_n_drop=enable_custom_drag_n_drop)
 
     def _setup_variable_values(
             self,
@@ -117,6 +121,54 @@ class QTableWidgetExtended(QTableWidget):
         self.setObjectName(object_name)
         self.setColumnCount(column_count)
         self.setRowCount(row_count)
+
+    def _setup_default_actions(self, enable_custom_drag_n_drop: bool):
+        if enable_custom_drag_n_drop is True:
+            self.setDragEnabled(True)
+            self.setAcceptDrops(True)
+            self.enable_custom_drag_n_drop = enable_custom_drag_n_drop
+
+    def dropEvent(self, event: QDropEvent) -> None:
+        if self.enable_custom_drag_n_drop is True:
+            input_dialog_text = """
+                Выберите одно из доступных действий
+                + для сложения
+                - для вычитания
+                / для деления
+                // для целочисленного деления
+                * для умножения
+                ** для возведения в степень
+                = для замещения значения ячейки (действие по умолчанию)
+                
+                Для выбора действия выберите предложенное, сообщения длиной >2 символов будут отклоняться.
+            """
+            action, result = QInputDialog.getText(
+                self, "Перемещение ячейки листа", input_dialog_text
+            )
+            if result is None or result is False:
+                event.ignore()
+                return
+
+            while len(action) > 2:
+                action, result = QInputDialog.getText(
+                    self, "Перемещение ячейки листа", "Выберите одно из доступных действий",
+                    text=input_dialog_text
+                )
+                if result is None or result is False:
+                    event.ignore()
+                    return
+
+            event_source_table: QTableWidgetExtended = event.source()
+            dropping_cell = event_source_table.currentItem()
+            accepting_cell_coords = self.indexAt(event.pos())
+            accepting_cell = self.item(accepting_cell_coords.row(), accepting_cell_coords.column())
+
+            self.setCurrentItem(accepting_cell)
+
+            if "=" in action or len(action) == 0:
+                accepting_cell.setText(dropping_cell.text())
+            else:
+                accepting_cell.setText(f"{accepting_cell.text()} {action} {dropping_cell.text()}")
 
 
 class QListWidgetExtended(QListWidget):

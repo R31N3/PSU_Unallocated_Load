@@ -8,7 +8,7 @@ from openpyxl import load_workbook, Workbook
 from openpyxl.worksheet.worksheet import Worksheet
 
 from PyQt5.QtCore import QRect
-from PyQt5.QtWidgets import QApplication, QFileDialog, QMenu, QTableWidgetItem, QMessageBox
+from PyQt5.QtWidgets import QApplication, QFileDialog, QMenu, QTableWidgetItem, QMessageBox, QInputDialog
 from PyQt5.QtGui import QCursor
 
 from sympy import sympify, SympifyError
@@ -106,6 +106,9 @@ class UnallocatedLoadApplication(MainWindowRefactored):
                 files_tab_widget=self.load_tab, action_button=self.add_load_column_button
             )
         )
+        self.add_load_sheet_button.clicked.connect(
+            lambda: self._add_tab_action(files_tab_widget=self.load_tab)
+        )
         self.add_teachers_row_button.clicked.connect(
             lambda: self._add_row_or_col_action(
                 files_tab_widget=self.teachers_tab, action_button=self.add_teachers_row_button
@@ -115,6 +118,13 @@ class UnallocatedLoadApplication(MainWindowRefactored):
             lambda: self._add_row_or_col_action(
                 files_tab_widget=self.teachers_tab, action_button=self.add_teachers_column_button
             )
+        )
+        self.add_teachers_sheet_button.clicked.connect(
+            lambda: self._add_tab_action(files_tab_widget=self.teachers_tab)
+        )
+
+        self.end_work_button.clicked.connect(
+            lambda: self._end_work_button()
         )
 
     def _refresh_opened_files_from_list(
@@ -140,8 +150,9 @@ class UnallocatedLoadApplication(MainWindowRefactored):
                 if files_tab_widget.opened_files_tables.get(tab_name) is None:
                     new_tab = QTabWidgetTabExtended(object_name=tab_name)
                     files_tab_widget.opened_files_tables[tab_name] = QTableWidgetExtended(
-                        geometry=QRect(-10, -10, 610, 520),
+                        geometry=QRect(-1, -1, 605, 485),
                         object_name=tab_name,
+                        enable_custom_drag_n_drop=True,
                         parent=new_tab
                     )
                     files_tab_widget.addTab(new_tab, tab_name)
@@ -244,6 +255,65 @@ class UnallocatedLoadApplication(MainWindowRefactored):
         warning.setIcon(warning.Warning)
         warning.setStandardButtons(warning.Ok)
         warning.exec()
+
+    def _add_tab_action(self, files_tab_widget: QTabWidgetExtended):
+        file_name, result = QInputDialog.getText(self, "Добавление файла", "Введите название файла")
+        file_path = None
+        if files_tab_widget is self.load_tab:
+            file_path = f"{os.path.join(self.work_dir, file_name)}.xlsx"
+        else:
+            file_path = f"{os.path.join(self.work_dir, 'Результаты', file_name)}.xlsx"
+        while file_name is None or files_tab_widget.opened_files.get(file_path) is not None or file_path is None:
+            if not result:
+                return
+            self._show_warning(title="Ошибка добавления файла", text="Название листа пустое или уже существует!")
+            file_name, result = QInputDialog.getText(self, "Добавление файла", "Введите название файла")
+
+            if files_tab_widget is self.load_tab:
+                file_path = f"{os.path.join(self.work_dir, file_name)}.xlsx"
+            else:
+                file_path = f"{os.path.join(self.work_dir, 'Результаты', file_name)}.xlsx"
+
+        sheet_name, result = QInputDialog.getText(self, "Добавление листа", "Введите название листа")
+        while sheet_name is None or len(sheet_name) == 0:
+            if not result:
+                return
+            self._show_warning(title="Ошибка добавления листа", text="Название листа не может быть пустым")
+            sheet_name, result = QInputDialog.getText(self, "Добавление листа", "Введите название листа")
+
+        workbook = Workbook()
+        workbook.worksheets[0].title = sheet_name
+        workbook.save(file_path)
+        files_tab_widget.opened_files[file_path] = load_workbook(file_path)
+
+        tab_name = f"{file_name} -> {sheet_name}"
+        new_tab = QTabWidgetTabExtended(object_name=tab_name)
+        files_tab_widget.opened_files_tables[tab_name] = QTableWidgetExtended(
+            geometry=QRect(-1, -1, 605, 485),
+            object_name=tab_name,
+            enable_custom_drag_n_drop=True,
+            parent=new_tab
+        )
+        files_tab_widget.addTab(new_tab, tab_name)
+        files_tab_widget.setCurrentWidget(new_tab)
+        table = files_tab_widget.opened_files_tables[tab_name]
+        table.itemChanged.connect(lambda: self._change_table_cell_value_action(
+            table_widget=table, current_workbook=workbook, sheet_name=sheet_name, file_path=file_path
+        ))
+
+    def _end_work_button(self):
+        notification = QMessageBox
+        button_clicked = notification.question(
+            self, "Завершение обработки",
+            "Вы уверены, что хотите завершить обработку?\nРезультаты работы будут храниться в подкаталоге "
+            "'Результаты' выбранной рабочей директории",
+            notification.Yes | notification.No
+        )
+
+        if button_clicked == notification.Yes:
+            for file_path, workbook in {**self.load_tab.opened_files, **self.teachers_tab.opened_files}.items():
+                workbook.save(file_path)
+            self.instance().quit()
 
 
 def main():
