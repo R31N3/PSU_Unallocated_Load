@@ -1,14 +1,10 @@
 from typing import Optional, List, Tuple, Dict
 
-from openpyxl import Workbook
-
 from PyQt5.QtCore import (
     QRect,
 )
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import (
-    QFont, QDropEvent
-)
+from PyQt5.QtGui import QFont, QDropEvent
 from PyQt5.QtWidgets import (
     QSizePolicy,
     QWidget,
@@ -17,10 +13,11 @@ from PyQt5.QtWidgets import (
     QPushButton,
     QLabel,
     QTableWidget,
-    QInputDialog
+    QInputDialog,
 )
+from openpyxl import Workbook
 
-from UI.enums import ListWidgetType, TabWidgetType, ButtonWidgetType
+from enums import ListWidgetType, TabWidgetType, ButtonWidgetType
 
 __all__ = [
     "QTabWidgetExtended",
@@ -28,20 +25,20 @@ __all__ = [
     "QTableWidgetExtended",
     "QListWidgetExtended",
     "QPushButtonExtended",
-    "QLabelExtended"
+    "QLabelExtended",
 ]
 
 
 class QTabWidgetExtended(QTabWidget):
     def __init__(
-            self,
-            geometry: QRect,
-            object_name: str,
-            size_policy: Optional[QSizePolicy] = None,
-            font: Optional[QFont] = None,
-            font_size: Optional[int] = None,
-            tab_widget_type: Optional[TabWidgetType] = None,
-            parent=None,
+        self,
+        geometry: QRect,
+        object_name: str,
+        size_policy: Optional[QSizePolicy] = None,
+        font: Optional[QFont] = None,
+        font_size: Optional[int] = None,
+        tab_widget_type: Optional[TabWidgetType] = None,
+        parent=None,
     ):
         super(QTabWidgetExtended, self).__init__(parent=parent)
         # Setup Default Values
@@ -51,11 +48,7 @@ class QTabWidgetExtended(QTabWidget):
         self.setTabShape(QTabWidget.Rounded)
         # Setup Variable Values
         self._setup_variable_values(
-            geometry=geometry,
-            size_policy=size_policy,
-            font=font,
-            font_size=font_size,
-            object_name=object_name
+            geometry=geometry, size_policy=size_policy, font=font, font_size=font_size, object_name=object_name
         )
         # Setup Extension Values
         if tab_widget_type == TabWidgetType.xlsx_tab_widget:
@@ -63,12 +56,12 @@ class QTabWidgetExtended(QTabWidget):
             self.opened_files_tables: Dict[str, QTableWidgetExtended] = {}
 
     def _setup_variable_values(
-            self,
-            geometry: QRect,
-            size_policy: QSizePolicy,
-            font: QFont,
-            font_size: int,
-            object_name: str,
+        self,
+        geometry: QRect,
+        size_policy: QSizePolicy,
+        font: QFont,
+        font_size: int,
+        object_name: str,
     ):
         self.setGeometry(geometry)
         self.setObjectName(object_name)
@@ -94,13 +87,13 @@ class QTabWidgetTabExtended(QWidget):
 
 class QTableWidgetExtended(QTableWidget):
     def __init__(
-            self,
-            geometry: QRect,
-            object_name: str,
-            column_count: int = 0,
-            row_count: int = 0,
-            enable_custom_drag_n_drop: bool = False,
-            parent=None
+        self,
+        geometry: QRect,
+        object_name: str,
+        column_count: int = 0,
+        row_count: int = 0,
+        enable_custom_drag_n_drop: bool = False,
+        parent=None,
     ):
         super(QTableWidgetExtended, self).__init__(parent=parent)
         # Setup Variable Values
@@ -110,13 +103,7 @@ class QTableWidgetExtended(QTableWidget):
         # Setup Default Actions
         self._setup_default_actions(enable_custom_drag_n_drop=enable_custom_drag_n_drop)
 
-    def _setup_variable_values(
-            self,
-            geometry: QRect,
-            object_name: str,
-            column_count: int,
-            row_count: int
-    ):
+    def _setup_variable_values(self, geometry: QRect, object_name: str, column_count: int, row_count: int):
         self.setGeometry(geometry)
         self.setObjectName(object_name)
         self.setColumnCount(column_count)
@@ -142,17 +129,14 @@ class QTableWidgetExtended(QTableWidget):
                 
                 Для выбора действия выберите предложенное, сообщения длиной >2 символов будут отклоняться.
             """
-            action, result = QInputDialog.getText(
-                self, "Перемещение ячейки листа", input_dialog_text
-            )
+            action, result = QInputDialog.getText(self, "Перемещение ячейки листа", input_dialog_text)
             if result is None or result is False:
                 event.ignore()
                 return
 
             while len(action) > 2:
                 action, result = QInputDialog.getText(
-                    self, "Перемещение ячейки листа", "Выберите одно из доступных действий",
-                    text=input_dialog_text
+                    self, "Перемещение ячейки листа", "Выберите одно из доступных действий", text=input_dialog_text
                 )
                 if result is None or result is False:
                     event.ignore()
@@ -173,11 +157,7 @@ class QTableWidgetExtended(QTableWidget):
 
 class QListWidgetExtended(QListWidget):
     def __init__(
-            self,
-            geometry: QRect,
-            object_name: str,
-            list_widget_type: Optional[ListWidgetType] = None,
-            parent=None
+        self, geometry: QRect, object_name: str, list_widget_type: Optional[ListWidgetType] = None, parent=None
     ):
         super(QListWidgetExtended, self).__init__(parent=parent)
         # Setup Default Values
@@ -189,9 +169,9 @@ class QListWidgetExtended(QListWidget):
             self.selected_files: List[Tuple[str, str]] = []
 
     def _setup_variable_values(
-            self,
-            geometry: QRect,
-            object_name: str,
+        self,
+        geometry: QRect,
+        object_name: str,
     ):
         self.setGeometry(geometry)
         self.setObjectName(object_name)
@@ -199,32 +179,27 @@ class QListWidgetExtended(QListWidget):
 
 class QPushButtonExtended(QPushButton):
     def __init__(
-            self,
-            geometry: QRect,
-            font: QFont,
-            font_size: int,
-            object_name: str,
-            button_widget_type: Optional[ButtonWidgetType] = None,
-            parent=None
+        self,
+        geometry: QRect,
+        font: QFont,
+        font_size: int,
+        object_name: str,
+        button_widget_type: Optional[ButtonWidgetType] = None,
+        parent=None,
     ):
         super(QPushButtonExtended, self).__init__(parent=parent)
         # Setup Default Values
         # Setup Variable Values
-        self._setup_variable_values(
-            geometry=geometry,
-            font=font,
-            font_size=font_size,
-            object_name=object_name
-        )
+        self._setup_variable_values(geometry=geometry, font=font, font_size=font_size, object_name=object_name)
         # Setup Extension Values
         self.button_widget_type = button_widget_type
 
     def _setup_variable_values(
-            self,
-            geometry: QRect,
-            font: QFont,
-            font_size: int,
-            object_name: str,
+        self,
+        geometry: QRect,
+        font: QFont,
+        font_size: int,
+        object_name: str,
     ):
         self.setGeometry(geometry)
         font.setPointSize(font_size)
@@ -233,25 +208,18 @@ class QPushButtonExtended(QPushButton):
 
 
 class QLabelExtended(QLabel):
-    def __init__(
-            self,
-            geometry: QRect,
-            font: QFont,
-            font_size: int,
-            object_name: str,
-            parent=None
-    ):
+    def __init__(self, geometry: QRect, font: QFont, font_size: int, object_name: str, parent=None):
         super(QLabelExtended, self).__init__(parent=parent)
         # Setup Default Values
         # Setup Variable Values
         self._setup_variable_values(geometry=geometry, font=font, font_size=font_size, object_name=object_name)
 
     def _setup_variable_values(
-            self,
-            geometry: QRect,
-            font: QFont,
-            font_size: int,
-            object_name: str,
+        self,
+        geometry: QRect,
+        font: QFont,
+        font_size: int,
+        object_name: str,
     ):
         self.setGeometry(geometry)
         font.setPointSize(font_size)
