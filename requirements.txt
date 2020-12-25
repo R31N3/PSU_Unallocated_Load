@@ -1,3 +1,6 @@
 openpyxl
 sympy
 PyQt5
+pyexcel
+pyexcel-xls
+pyexcel-xlsx

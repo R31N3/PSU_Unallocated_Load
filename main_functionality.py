@@ -1,6 +1,7 @@
 import os
 import shutil
 from pathlib import Path
+import pyexcel
 from typing import List
 
 from PyQt5.QtCore import QRect
@@ -122,12 +123,20 @@ class UnallocatedLoadApplication(MainWindowRefactored):
         self, selected_files: List[str], files_path: str, files_tab_widget: QTabWidgetExtended
     ):
         for selected_file in selected_files:
-            file_name = selected_file[0]
+            file_name, file_path = selected_file
             temp_file_path = os.path.join(files_path, file_name)
+            if Path(file_path).suffix == ".xls":
+                temp_file_path = f"{temp_file_path}x"
 
             if os.path.exists(temp_file_path) is False or files_tab_widget.opened_files.get(temp_file_path) is None:
                 if os.path.exists(temp_file_path) is False:
-                    shutil.copyfile(selected_file[1], temp_file_path)
+                    if Path(file_path).suffix == ".xlsx":
+                        shutil.copyfile(file_path, temp_file_path)
+                    elif Path(file_path).suffix == ".xls":
+                        pyexcel.save_book_as(
+                            file_name=file_path,
+                            dest_file_name=temp_file_path
+                        )
                 opened_file = load_workbook(filename=temp_file_path)
                 files_tab_widget.opened_files[temp_file_path] = opened_file
             else:
@@ -156,29 +165,19 @@ class UnallocatedLoadApplication(MainWindowRefactored):
         for items in worksheet.merged_cell_ranges:
             worksheet.unmerge_cells(str(items))
 
-        headers = [item.value for item in worksheet[8] if item.value is not None]
-        row = 1
-        rows = []
-        table_widget.setColumnCount(len(headers))
-        table_widget.setHorizontalHeaderLabels(headers)
-        counter = 0
-        while worksheet[row][0].value is not None or counter < 5:
-            row_values = []
+        parsed_rows = []
+        for row in range(1, worksheet.max_row):
+            parsed_row = []
             table_widget.insertRow(table_widget.rowCount())
-            for col in range(len(headers)):
-                row_values.append(QTableWidgetItem(str(worksheet[row][col].value or "")))
-            rows.append(row_values)
-            row += 1
-            if worksheet[row][0].value is None:
-                counter += 1
-            else:
-                counter = 0
+            for col in range(1, worksheet.max_column):
+                if col > table_widget.columnCount():
+                    table_widget.insertColumn(table_widget.columnCount())
+                parsed_row.append(QTableWidgetItem(str(worksheet[row][col].value or "")))
+            parsed_rows.append(parsed_row)
 
-        row = 0
-        for row_values in rows:
-            for col in range(len(headers)):
-                table_widget.setItem(row, col, row_values[col])
-            row += 1
+        for row in range(len(parsed_rows)):
+            for col in range(len(parsed_rows[row])):
+                table_widget.setItem(row, col, parsed_rows[row][col])
 
         table_widget.resizeColumnsToContents()
         table_widget.itemChanged.connect(
